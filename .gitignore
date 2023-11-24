@@ -1,0 +1,9 @@
+# Arquivos temporários
+*.log
+*.tmp
+
+# Diretórios
+node_modules/
+build/
+.idea/
+scripts/
