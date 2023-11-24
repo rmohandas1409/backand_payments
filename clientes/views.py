@@ -18,7 +18,7 @@ from clientes.serializer import ClienteSerializer
 
 
 @authentication_classes([JWTAuthentication])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 class ClientesView(generics.ListAPIView):
     """Listando todos os clientes."""
     queryset = Cliente.objects.all()
@@ -46,7 +46,7 @@ class ClienteCreateView(CreateModelMixin, RetrieveUpdateDestroyAPIView):
 
 
 @authentication_classes([JWTAuthentication])
-@permission_classes([AllowAny]) # libera a api de autenticação
+@permission_classes([IsAuthenticated])
 class ClienteUpaDateView(RetrieveUpdateDestroyAPIView):
     """Atualização de um cliente"""
     queryset = Cliente.objects.all()
@@ -61,7 +61,7 @@ class ClienteUpaDateView(RetrieveUpdateDestroyAPIView):
         return super().patch(request, *args, **kwargs)
 
 @authentication_classes([JWTAuthentication])
-@permission_classes([AllowAny]) # libera a api de autenticação
+@permission_classes([IsAuthenticated])
 class ClienteDeleteView(RetrieveUpdateDestroyAPIView):
     """Deleta um cliente"""
     queryset = Cliente.objects.all()
