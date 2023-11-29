@@ -1,7 +1,8 @@
 import logging
 
 from django.core.mail.backends import console
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, generics, status, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import get_object_or_404, RetrieveUpdateAPIView, CreateAPIView, \
     RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import CreateModelMixin
@@ -10,7 +11,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import authentication_classes, permission_classes
 from clientes.models import Cliente
-from clientes.serializer import ClienteSerializer
+from clientes.serializer import ClienteSerializer, ClienteSerializerV2
 
 #@authentication_classes([JWTAuthentication])
 #@permission_classes([IsAuthenticated]) #Libera a api para ser autenticada
@@ -18,11 +19,21 @@ from clientes.serializer import ClienteSerializer
 
 
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 class ClientesView(generics.ListAPIView):
     """Listando todos os clientes."""
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    ordering_fields =['name']
+    search_fields = ['name', 'cpf']
+    filterset_fields = ['ativo']
+
+    def get_serializer_class(self):
+        if self.request.version == 'v2':
+            return ClienteSerializerV2
+        else:
+            return ClienteSerializer
 
 
 @authentication_classes([JWTAuthentication])
@@ -46,7 +57,7 @@ class ClienteCreateView(CreateModelMixin, RetrieveUpdateDestroyAPIView):
 
 
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 class ClienteUpaDateView(RetrieveUpdateDestroyAPIView):
     """Atualização de um cliente"""
     queryset = Cliente.objects.all()
@@ -61,7 +72,7 @@ class ClienteUpaDateView(RetrieveUpdateDestroyAPIView):
         return super().patch(request, *args, **kwargs)
 
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 class ClienteDeleteView(RetrieveUpdateDestroyAPIView):
     """Deleta um cliente"""
     queryset = Cliente.objects.all()
