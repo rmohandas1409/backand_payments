@@ -34,5 +34,10 @@ class ClienteSerializer(serializers.ModelSerializer):
     #         raise serializers.ValidationError("Este cliente já existe na base de dados!")
     #     return email
 
+class ClienteSerializerV2(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = ['name', 'telefone', 'celular']
+
 
 
